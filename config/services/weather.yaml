@@ -1,0 +1,24 @@
+parameters:
+  weather_cache_namespace: 'weather'
+  weather_cache_default_life_time: 40
+  weather_cache_directory: '%kernel.project_dir%/var/'
+
+services:
+  app.weather.file_system_cache:
+    class: Symfony\Component\Cache\Simple\FilesystemCache
+    arguments:
+      $namespace: '%weather_cache_namespace%'
+      $defaultLifetime: '%weather_cache_default_life_time%'
+      $directory: '%weather_cache_directory%'
+
+  app.weather.loader_service:
+    class: App\Weather\LoaderService
+    arguments:
+      $providerManager: '@app.weather.provider_manager'
+      $cacheService: '@app.weather.file_system_cache'
+
+  app.weather.provider_manager:
+    class: App\Weather\ProviderManager
+    calls:
+      - [addWeatherProvider, ['yahoo', '@app.external_api.yahoo_api']]
+      - [addWeatherProvider, ['google', '@app.external_api.google_api']]

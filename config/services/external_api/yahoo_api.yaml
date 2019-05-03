@@ -1,0 +1,4 @@
+parameters:
+services:
+  app.external_api.yahoo_api:
+    class: App\ExternalApi\YahooApi
