@@ -6,12 +6,14 @@ use DateTime;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 
+
 class WeatherController extends AbstractController
 {
     /**
-     * @param           $day
+     * @param               $day
      * @param LoaderService $loaderService
      * @return Response
+     * @throws \Psr\SimpleCache\InvalidArgumentException
      */
     public function index($day, LoaderService $loaderService): Response
     {
