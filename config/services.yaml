@@ -34,3 +34,8 @@ services:
     App\Controller\WeatherController:
         bind:
             $loaderService: '@app.weather.loader_service'
+
+
+    App\Command\AgeCalculatorCommand:
+        tags:
+            - { name: 'console.command', command: 'app:age:calculator' }
