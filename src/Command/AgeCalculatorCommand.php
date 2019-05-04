@@ -2,7 +2,6 @@
 
 namespace App\Command;
 
-
 use DateTime;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -11,8 +10,15 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
+/**
+ * Class AgeCalculatorCommand
+ * @package App\Command
+ */
 class AgeCalculatorCommand extends Command
 {
+    /**
+     * @var string
+     */
     protected static $defaultName = 'app:age:calculator';
 
     protected function configure()
@@ -23,17 +29,20 @@ class AgeCalculatorCommand extends Command
             ->addOption('adult', 'a', InputOption::VALUE_NONE, 'Check if adult')
             ->addOption('day', 'd', InputOption::VALUE_NONE, 'Calculate age in days')
             ->addOption('second', 's', InputOption::VALUE_NONE, 'Calculate age in seconds')
-            ->setHelp('This command calculates and prints age')
-        ;
+            ->setHelp('This command calculates and prints age');
     }
 
+    /**
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     */
     protected function execute(InputInterface $input, OutputInterface $output): void
     {
         $io = new SymfonyStyle($input, $output);
 
         try {
-            $dateOfBirth = new \DateTime($input->getArgument('dateOfBirth'));
-            $today = new \Datetime();
+            $dateOfBirth = new DateTime($input->getArgument('dateOfBirth'));
+            $today = new Datetime();
             $age = $today->diff($dateOfBirth);
         } catch (\Exception $e) {
             $io->warning("Wrong date format (e.g. 2000-11-10)");
@@ -46,7 +55,7 @@ class AgeCalculatorCommand extends Command
         }
 
         if ($input->getOption("second")) {
-            $seconds = $today->getTimestamp() -$dateOfBirth->getTimestamp();
+            $seconds = $today->getTimestamp() - $dateOfBirth->getTimestamp();
             $io->note(sprintf("I am %s seconds old", $seconds));
 
         } elseif ($input->getOption("day")) {
