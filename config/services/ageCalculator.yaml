@@ -1,0 +1,10 @@
+services:
+  app.age.age_manager:
+    class: App\Age\AgeManager
+    arguments:
+      $adultIdentifier: '@app.age.adult_identifier'
+      $ageCalculator: '@app.age.age_calculator'
+  app.age.adult_identifier:
+    class: App\Age\AdultIdentifier
+  app.age.age_calculator:
+    class: App\Age\AgeCalculator

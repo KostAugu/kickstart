@@ -2,6 +2,7 @@ imports:
     - { resource: services/external_api/google_api.yaml}
     - { resource: services/external_api/yahoo_api.yaml}
     - { resource: services/weather.yaml}
+    - { resource: services/ageCalculator.yaml}
 
 # This file is the entry point to configure your own services.
 # Files in the packages/ subdirectory configure your dependencies.
@@ -21,9 +22,9 @@ services:
 #    App\:
 #        resource: '../src/*'
 #        exclude: '../src/{DependencyInjection,Entity,Migrations,Tests,Kernel.php}'
-
-    # controllers are imported separately to make sure services can be injected
-    # as action arguments even if you don't extend any base controller class
+#
+#    # controllers are imported separately to make sure services can be injected
+#    # as action arguments even if you don't extend any base controller class
 #    App\Controller\:
 #        resource: '../src/Controller'
 #        tags: ['controller.service_arguments']
@@ -39,3 +40,5 @@ services:
     App\Command\AgeCalculatorCommand:
         tags:
             - { name: 'console.command', command: 'app:age:calculator' }
+        arguments:
+            $ageManager: '@app.age.age_manager'
