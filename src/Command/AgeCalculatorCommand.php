@@ -2,7 +2,8 @@
 
 namespace App\Command;
 
-use DateTime;
+
+use App\Age\AgeManager;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -17,6 +18,21 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 class AgeCalculatorCommand extends Command
 {
     /**
+     * @var AgeManager
+     */
+    private $ageManager;
+
+    /**
+     * AgeCalculatorCommand constructor.
+     * @param AgeManager $ageManager
+     */
+    public function __construct(AgeManager $ageManager)
+    {
+        parent::__construct();
+        $this->ageManager = $ageManager;
+    }
+
+    /**
      * @var string
      */
     protected static $defaultName = 'app:age:calculator';
@@ -27,8 +43,6 @@ class AgeCalculatorCommand extends Command
             ->setDescription('Calculate age')
             ->addArgument('dateOfBirth', InputArgument::REQUIRED, 'Date of birth')
             ->addOption('adult', 'a', InputOption::VALUE_NONE, 'Check if adult')
-            ->addOption('day', 'd', InputOption::VALUE_NONE, 'Calculate age in days')
-            ->addOption('second', 's', InputOption::VALUE_NONE, 'Calculate age in seconds')
             ->setHelp('This command calculates and prints age');
     }
 
@@ -41,35 +55,16 @@ class AgeCalculatorCommand extends Command
         $io = new SymfonyStyle($input, $output);
 
         try {
-            $dateOfBirth = new DateTime($input->getArgument('dateOfBirth'));
-            $today = new Datetime();
-            $age = $today->diff($dateOfBirth);
+            $dateOfBirth = new \DateTime($input->getArgument('dateOfBirth'));
         } catch (\Exception $e) {
-            $io->warning("Wrong date format (e.g. 2000-11-10)");
-        }
-
-        $options = $input->getOptions();
-        if ($options['day'] && $options['second']) {
-            $io->warning("Use only one of these options: --day --second");
+            $io->warning("Wrong date format!");
             exit;
         }
 
-        if ($input->getOption("second")) {
-            $seconds = $today->getTimestamp() - $dateOfBirth->getTimestamp();
-            $io->note(sprintf("I am %s seconds old", $seconds));
+        $this->ageManager->printAge($dateOfBirth, $io);
 
-        } elseif ($input->getOption("day")) {
-            $io->note(sprintf("I am %s days old", $age->days));
-        } else {
-            $io->note(sprintf("I am %s years old", $age->y));
-        }
-
-        if ($input->getOption("adult")) {
-            if ($age->y > 18) {
-                $io->success("Am I an adult ?   ----   YES !!!");
-            } else {
-                $io->warning("Am I an adult ?   ----   NO !!!");
-            }
+        if ($input->getOption('adult')) {
+            $this->ageManager->identifyAdult($io);
         }
     }
 }
